@@ -1,6 +1,5 @@
 const { prompt } = require('inquirer')
 const { createConnection } = require('mysql2')
-
 const db = createConnection({
   host: 'localhost',
   port: 3306,
@@ -10,9 +9,9 @@ const db = createConnection({
 })
 
 async function queryProducts(columns) {
-//Get all Products from the Database
+  //Get all Products from the Database
   let response = await new Promise((resolve, reject) => {
-    db.query(`SELECT ${coumn} FROM products`, (e, r) => {
+    db.query(`SELECT ${columns} FROM products`, (e, r) => {
       if (e) {
         reject(e)
       } else {
@@ -24,113 +23,46 @@ async function queryProducts(columns) {
 }
 
 const getProducts = _ => {
-
+  let pArray = []
   queryProducts('*')
-            .then(r => {
-              r.forEach(({ title, artist, genre }) => console.log(`
-                ---------
-                ${title} by ${artist}
-                Genre: ${genre}
-                ----------
-              `))
-              getAction()
-            })
-            .catch(e => console.log(e))
-
-
-
-
-//   queryProducts()
-//   //Process the array returned 
-//   .then(r => {
-
-//  console.log(r.length)
-
-//  let pArray
-
-//  for (i=0; i < r.length; i++)
-//  {
-
-//   let pArray
-//   pArray[i] = r[i].product_name
-//   console.log(pArray)
-
-//   console.log(r[i].product_name)
-//  }
-
-
-   
-
-  
-
-//     prompt({
-//       type: 'list',
-//       name: 'Product',
-//      message: 'Select the product you would like to buy:',
-//       choices: [1,2,3]
-//       })
-//       .then(title => {
-        
-  
-//       })
-//       .catch(e => console.log(e))
-//   })
-//   .catch(e => console.log(e))
-// }
-
-
-
-
-
-  
- //queryProducts()
-  
-
-//  console.log(queryProducts())
-//      prompt({
-//        type: 'list',
-//          name: 'Product',
-//         message: 'Select the product you would like to buy:',
-//          // choices: r.map(({item_id, product_name, price }) => title)
-//          choices: [queryProducts()]
-//       })
-//        .then(product => {
-
-//         console.log(product.Product)
-// //           db.query('SELECT * FROM songs WHERE ?', title, (e, [{ title, artist, genre }]) => {
-// //             if (e) throw e
-// //             console.log(`
-// //             ----------
-// //             ${title} by ${artist}
-// //             Genre: ${genre}
-// //             ----------
-// //             `)
-// //             getAction()
-// //           })
-// //         })
-// //         .catch(e => console.log(e))
-//     })
-//   .catch(e => console.log(e))
-// }
-
-
-
-
-
-
-        getProducts()
-        break
-        
-    case '--EXIT--':
-          process.exit()
-
-    default:
-        getAction()
-        break
-      }
+    .then(r => {
+      r.forEach(({ item_id, product_name, department_name }) => {
+        pArray.push(`#${item_id} ${product_name} FROM ${department_name}`)
+      })
+      prompt({
+        type: 'list',
+        name: 'Product',
+        message: 'Select the product you would like to buy:',
+        choices: pArray
+      })
+        .then(answer => {
+          console.log(answer.Product)
+        })
+        .catch(e => console.log(e))
+      // getAction()
     })
     .catch(e => console.log(e))
 }
 
+const getAction = _ => {
+  prompt({
+    type: 'list',
+    name: 'action',
+    message: 'What would you like to do?',
+    choices: ['Shop our products', '--EXIT--']
+  })
+    .then(({ action }) => {
+      switch (action) {
+        case 'Shop our products':
+          getProducts()
+          break
+        case '--EXIT--':
+          process.exit()
+        default:
+          getAction()
+          break
+      }
+    })
+}
 db.connect(e => e ? console.log(e) : getAction())
 
