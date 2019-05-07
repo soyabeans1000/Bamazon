@@ -8,6 +8,62 @@ const db = createConnection({
   database: 'bamazon_db'
 })
 
+async function buy(x,qty)
+{
+  console.log('inside buy' + x + qty)
+
+  let productId = (x.split(' ')[0]).substring(1)
+
+  console.log(productId)
+
+
+  let response = await new Promise((resolve, reject) => {
+    db.query(`SELECT stock_quantity FROM products WHERE item_id = ${productId}`, (e, r) => {
+      if (e) {
+        reject(e)
+       console.log(e)
+      } else {
+        resolve(r)
+
+        console.log(r)
+        let itemQty = parseInt(r[0].stock_quantity)
+
+        console.log(itemQty)
+
+        if (qty <= itemQty)
+        console.log('Update')
+        else 
+        console.log("Sorry we dont have enough")
+
+        getAction()
+      }
+      })
+       
+        
+  })
+
+}
+
+
+const buyItem = (x) => {
+
+  prompt({
+    type: 'input',
+    name: 'qty',
+    message: 'How Many?',
+    //choices
+  })
+    .then(answer => {
+      //console.log(answer.qty)
+      buy(x,answer.qty)  
+
+      //getProducts()
+    })
+    .catch(e => console.log(e))
+
+}
+
+
 async function queryProducts(columns) {
   //Get all Products from the Database
   let response = await new Promise((resolve, reject) => {
@@ -24,11 +80,13 @@ async function queryProducts(columns) {
 
 const getProducts = _ => {
   let pArray = []
+  let ans
   queryProducts('*')
     .then(r => {
-      r.forEach(({ item_id, product_name, department_name }) => {
-        pArray.push(`#${item_id} ${product_name} FROM ${department_name}`)
+      r.forEach(({ item_id, product_name, price }) => {
+        pArray.push(`#${item_id} ${product_name} - ${price}`)
       })
+      pArray.push('Return to Main Menu')
       prompt({
         type: 'list',
         name: 'Product',
@@ -36,10 +94,17 @@ const getProducts = _ => {
         choices: pArray
       })
         .then(answer => {
-          console.log(answer.Product)
+
+        if (answer.Product === 'Return to Main Menu')
+        {
+          getAction()
+        }
+        else 
+        {buyItem(answer.Product)}
         })
         .catch(e => console.log(e))
-      // getAction()
+
+        
     })
     .catch(e => console.log(e))
 }
