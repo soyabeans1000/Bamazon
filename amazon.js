@@ -8,40 +8,41 @@ const db = createConnection({
   database: 'bamazon_db'
 })
 
-async function buy(x,qty)
-{
-  console.log('inside buy' + x + qty)
+async function buy(x, qty) {
 
   let productId = (x.split(' ')[0]).substring(1)
-
-  console.log(productId)
-
-
   let response = await new Promise((resolve, reject) => {
     db.query(`SELECT stock_quantity FROM products WHERE item_id = ${productId}`, (e, r) => {
+      //IF error
       if (e) {
         reject(e)
-       console.log(e)
-      } else {
+        console.log(e)
+      }
+      else {
         resolve(r)
-
-        console.log(r)
+        //get the quantity to compare with the number to buy
         let itemQty = parseInt(r[0].stock_quantity)
 
-        console.log(itemQty)
-
-        if (qty <= itemQty)
-        console.log('Update')
-        else 
-        console.log("Sorry we dont have enough")
-
-        getAction()
+        if (qty <= itemQty) {
+          //get the quantity to compare with the number to buy
+          console.log('Update')
+          db.query(`UPDATE products set stock_quantity = ${itemQty - qty} WHERE item_id = ${productId}`, (e, r) => {
+            if (e) {
+              console.log(e)
+            } else {
+              "Purchase Successful!"
+            }
+            //End Update Query
+          })
+        }
+        //If not enough
+        else
+          console.log("Sorry we dont have enough")
+        //Done Updating
       }
-      })
-       
-        
+    })
   })
-
+  getAction()
 }
 
 
