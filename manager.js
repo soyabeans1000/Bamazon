@@ -23,58 +23,53 @@ async function getProducts(columns) {
     return response
 }
 
-// const getSong = _ => {
-//   getSongs('title')
-//     .then(r => {
-//       prompt({
-//         type: 'list',
-//         name: 'title',
-//         message: 'Select the song you would like to view:',
-//         choices: r.map(({ title }) => title)
-//       })
-//         .then(title => {
-//           db.query('SELECT * FROM songs WHERE ?', title, (e, [{ title, artist, genre }]) => {
-//             if (e) throw e
-//             console.log(`
-//             ----------
-//             ${title} by ${artist}
-//             Genre: ${genre}
-//             ----------
-//             `)
-//             getAction()
-//           })
-//         })
-//         .catch(e => console.log(e))
-//     })
-//     .catch(e => console.log(e))
-// }
 
-// const addSong = _ => {
-//   prompt([
-//     {
-//       type: 'input',
-//       name: 'title',
-//       message: 'What is the title of the song?'
-//     },
-//     {
-//       type: 'input',
-//       name: 'artist',
-//       message: 'Who is this song by?'
-//     },
-//     {
-//       type: 'input',
-//       name: 'genre',
-//       message: 'What genre is this song from?'
-//     }
-//   ])
-//     .then(song => {
-//       db.query('INSERT INTO songs SET ?', song, e => {
-//         if (e) throw e
-//         console.log('*** Successfully added your song! ***')
-//         getAction()
-//       })
-//     })
-// }
+async function getLowInventory(columns) {
+  //Get all Products from the Database
+  let response = await new Promise((resolve, reject) => {
+      db.query(`SELECT ${columns} FROM products WHERE stock_quantity <= 5`, (e, r) => {
+          if (e) {
+              reject(e)
+          } else {
+              resolve(r)
+          }
+      })
+  })
+  return response
+}
+
+const addProduct = _ => {
+   prompt([
+          {
+     type: 'input',
+       name: 'product_name',
+       message: 'What is the name of the Product?'
+     },
+     {
+       type: 'input',
+       name: 'department_name',
+       message: 'Which Department?'
+     },
+     {
+       type: 'input',
+       name: 'price',
+       message: 'What is the price per item?'
+     },
+     {
+      type: 'input',
+      name: 'stock_quantity',
+      message: 'How many do you have?'
+    },
+
+   ])
+     .then(item => {
+       db.query('INSERT INTO PRODUCTS SET ?', item, e => {
+         if (e) throw e
+         console.log('*** Successfully added your product! ***')
+         getAction()
+       })
+     })
+}
 
 // const updateSong = _ => {
 //   getSongs('title')
@@ -111,44 +106,14 @@ async function getProducts(columns) {
 //     .catch(e => console.log(e))
 // }
 
-// const deleteSong = _ => {
-//   getSongs('title')
-//     .then(r => {
-//       prompt([
-//         {
-//           type: 'list',
-//           name: 'title',
-//           message: 'Select the song you wish to delete:',
-//           choices: r.map(({ title }) => title)
-//         },
-//         {
-//           type: 'confirm',
-//           name: 'choice',
-//           message: 'Are you sure you want to delete this song?'
-//         }
-//       ])
-//         .then(({ title, choice }) => {
-//           if (choice) {
-//             db.query('DELETE FROM songs WHERE ?', { title }, e => {
-//               if (e) throw e
-//               console.log('*** Successfully deleted your song! ***')
-//               getAction()
-//             })
-//           } else {
-//             getAction()
-//           }
-//         })
-//         .catch(e => console.log(e))
-//     })
-//     .catch(e => console.log(e))
-// }
+
 
 const getAction = _ => {
   prompt({
     type: 'list',
     name: 'action',
     message: 'What would you like to do?',
-    choices: ['View products for Sale', 'View Low Inventory.', 'Add to Inventory', 'Add New Product', '--EXIT--']
+    choices: ['View products for Sale', 'View Low Inventory', 'Add to Inventory', 'Add New Product', '--EXIT--']
   })
     .then(({ action }) => {
       switch (action) {
@@ -157,7 +122,7 @@ const getAction = _ => {
             .then(r => {
               r.forEach(({item_id, product_name, price}) => console.log(`
                 ----------
-                #${item_id} ${product_name} - ${price}
+                #${item_id} ${product_name} - $${price}
                 ----------`
               ))
               getAction()
@@ -165,15 +130,24 @@ const getAction = _ => {
             .catch(e => console.log(e))
           break
         case 'View Low Inventory':
-         // getSong()
-         console.log('low inventory')
+        getLowInventory('*')
+          .then(r => {
+            r.forEach(({item_id, product_name, stock_quantity}) => console.log(`
+              ----------
+              #${item_id} ${product_name} - QTY:${stock_quantity}
+              ----------`
+            ))
+            getAction()
+          })
+          .catch(e => console.log(e))
+         
           break
         case 'Add to Inventory':
-         // addSong()
+         
          console.log('add')
           break
         case 'Add New Product':
-        console.log('addnew')
+        addProduct()
           break
         case '--EXIT--':
           process.exit()
