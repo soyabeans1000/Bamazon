@@ -77,7 +77,7 @@ const addProduct = _ => {
 
 
 //Update inventory of product with prod_id
-//Retiurns Promise
+//Returns Promise
 async function updateQty(prod_id,qty) {
 
   let response = await new Promise((resolve, reject) => {
