@@ -40,6 +40,8 @@ async function getLowInventory(columns) {
   return response
 }
 
+
+//Add Product to Database, after getting questions from user
 const addProduct = _ => {
    prompt([
           {
@@ -60,7 +62,7 @@ const addProduct = _ => {
      {
       type: 'input',
       name: 'stock_quantity',
-      message: 'How many do you have?'
+      message: 'How many?'
     },
 
    ])
@@ -74,10 +76,10 @@ const addProduct = _ => {
 }
 
 
+//Update inventory of product with prod_id
+//Retiurns Promise
 async function updateQty(prod_id,qty) {
 
-
-  //Get all Products from the Database
   let response = await new Promise((resolve, reject) => {
        db.query(`SELECT stock_quantity FROM products WHERE item_id = ${prod_id}`, (e, r) => {
           //IF error
@@ -87,31 +89,22 @@ async function updateQty(prod_id,qty) {
            }
               else {
                   let currentQty =  r[0].stock_quantity
-
-                  
-
                   let newQty = currentQty + parseInt(qty)
-
-                 
-
                   db.query(`UPDATE products set stock_quantity = ${newQty} WHERE item_id = ${prod_id}`, (e, r) => {
-            
-                          if (e) {
+                         if (e) {
                              reject(e)
                          } else {
-                             
                           resolve('*** Inventory Updated Succesfully  ***')
                           }
                         })        
-             }
-  })
-})
+                }
+            })
+        })
+        //return promise
   return response
 }
 
-
-
-
+//Update inventory of product selected from list 
 const updateInventory = _ => {
   getProducts('*')
     .then(r => {
@@ -130,92 +123,20 @@ const updateInventory = _ => {
         }
       ])
         .then( r => {
-
            let itemID = r.product_name.split(' ')[0]
 
-          console.log(itemID)
-
+          //Call Function with promise
           updateQty(itemID, r.value)
           .then(r => {console.log(r)
           getAction()
         })
-          .catch(e => console.log(e))
-
-          // db.query(`SELECT stock_quantity FROM products WHERE item_id = ${itemID}`, (e, r) => {
-          // //IF error
-          //   if (e) {
-          //       // reject(e)
-          //       console.log(e)
-          // }
-          //    else {
-
-          //     let stock_quantity = r.stock_quantity
-
-          //     console.log(r)
-
-          //   }
-
-         
-            
+          .catch(e => console.log(e))            
           })
-
-         
-          //       //get the quantity to compare with the number to buy
-          // let itemQty = parseInt(r[0].stock_quantity)
-
-          //  if (qty <= itemQty) {
-          //       //get the quantity to compare with the number to buy
-          //           db.query(`UPDATE products set stock_quantity = ${itemQty - qty} WHERE item_id = ${productId}`, (e, r) => {
-
-
-
-
-        })
-
-         
-      
-
+        })     
 .catch(e => console.log(e))
 }
 
-
-// const updateSong = _ => {
-//   getSongs('title')
-//     .then(r => {)
-//       prompt([
-//         {
-//           type: 'list',
-//           name: 'title',
-//           message: 'Select the song you wish to change:',
-//           choices: r.map(({ title }) => title)
-//         },
-//         {
-//           type: 'list',
-//           name: 'column',
-//           message: 'Select the property you wish to change:',
-//           choices: ['title', 'artist', 'genre']
-//         },
-//         {
-//           type: 'input',
-//           name: 'value',
-//           message: 'What is the new value?'
-//         }
-//       ])
-//         .then(({ title, column, value }) => {
-//           db.query('UPDATE songs SET ? WHERE ?', [
-//             { [column]: value }, { title }
-//           ], e => {
-//             if (e) throw e
-//             console.log('*** Succesfully updated your song! ***')
-//             getAction()
-//           })
-//         })
-//     })
-//     .catch(e => console.log(e))
-// }
-
-
-
+//Default menu
 const getAction = _ => {
   prompt({
     type: 'list',
