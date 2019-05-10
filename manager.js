@@ -75,7 +75,6 @@ const addProduct = _ => {
      })
 }
 
-
 //Update inventory of product with prod_id
 //Returns Promise
 async function updateQty(prod_id,qty) {
@@ -172,7 +171,6 @@ const getAction = _ => {
           break
         case 'Add to Inventory':
         updateInventory() 
-        
           break
         case 'Add New Product':
         addProduct()
