@@ -23,7 +23,8 @@ async function getProducts(columns) {
     return response
 }
 
-
+//Return Products with inventory equal and less than 5
+//Returns a promise, with an array 
 async function getLowInventory(columns) {
   //Get all Products from the Database
   let response = await new Promise((resolve, reject) => {
@@ -35,6 +36,7 @@ async function getLowInventory(columns) {
           }
       })
   })
+  //return promise
   return response
 }
 
@@ -74,7 +76,6 @@ const addProduct = _ => {
 
 async function updateQty(prod_id,qty) {
 
-  console.log(prod_id + '  ' + qty)
 
   //Get all Products from the Database
   let response = await new Promise((resolve, reject) => {
@@ -85,18 +86,23 @@ async function updateQty(prod_id,qty) {
                console.log(e)
            }
               else {
+                  let currentQty =  r[0].stock_quantity
 
-           console.log(r[0].stock_quantity)
+                  
 
+                  let newQty = currentQty + parseInt(qty)
 
+                 
 
-          
-
-
-
-
-
-           resolve(r[0].stock_quantity)
+                  db.query(`UPDATE products set stock_quantity = ${newQty} WHERE item_id = ${prod_id}`, (e, r) => {
+            
+                          if (e) {
+                             reject(e)
+                         } else {
+                             
+                          resolve('*** Inventory Updated Succesfully  ***')
+                          }
+                        })        
              }
   })
 })
@@ -130,9 +136,7 @@ const updateInventory = _ => {
           console.log(itemID)
 
           updateQty(itemID, r.value)
-          .then(r => {console.log('Message from update' + r)
-          
-          
+          .then(r => {console.log(r)
           getAction()
         })
           .catch(e => console.log(e))
