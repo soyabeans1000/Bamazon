@@ -72,6 +72,39 @@ const addProduct = _ => {
 }
 
 
+async function updateQty(prod_id,qty) {
+
+  console.log(prod_id + '  ' + qty)
+
+  //Get all Products from the Database
+  let response = await new Promise((resolve, reject) => {
+       db.query(`SELECT stock_quantity FROM products WHERE item_id = ${prod_id}`, (e, r) => {
+          //IF error
+           if (e) {
+                reject(e)
+               console.log(e)
+           }
+              else {
+
+           console.log(r[0].stock_quantity)
+
+
+
+          
+
+
+
+
+
+           resolve(r[0].stock_quantity)
+             }
+  })
+})
+  return response
+}
+
+
+
 
 const updateInventory = _ => {
   getProducts('*')
@@ -81,7 +114,7 @@ const updateInventory = _ => {
           type: 'list',
           name: 'product_name',
           message: 'Select the product you wish to change:',
-          choices: r.map(({ item_id, product_name }) => `${item_id}  ${product_name}`)
+          choices: r.map(({ item_id, product_name, stock_quantity }) => `${item_id} ${product_name}`)
         },
        
         {
@@ -91,11 +124,52 @@ const updateInventory = _ => {
         }
       ])
         .then( r => {
-          console.log('lets update')
-        getAction()
-    })
-    
-})
+
+           let itemID = r.product_name.split(' ')[0]
+
+          console.log(itemID)
+
+          updateQty(itemID, r.value)
+          .then(r => {console.log('Message from update' + r)
+          
+          
+          getAction()
+        })
+          .catch(e => console.log(e))
+
+          // db.query(`SELECT stock_quantity FROM products WHERE item_id = ${itemID}`, (e, r) => {
+          // //IF error
+          //   if (e) {
+          //       // reject(e)
+          //       console.log(e)
+          // }
+          //    else {
+
+          //     let stock_quantity = r.stock_quantity
+
+          //     console.log(r)
+
+          //   }
+
+         
+            
+          })
+
+         
+          //       //get the quantity to compare with the number to buy
+          // let itemQty = parseInt(r[0].stock_quantity)
+
+          //  if (qty <= itemQty) {
+          //       //get the quantity to compare with the number to buy
+          //           db.query(`UPDATE products set stock_quantity = ${itemQty - qty} WHERE item_id = ${productId}`, (e, r) => {
+
+
+
+
+        })
+
+         
+      
 
 .catch(e => console.log(e))
 }
