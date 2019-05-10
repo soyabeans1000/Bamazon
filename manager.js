@@ -71,9 +71,39 @@ const addProduct = _ => {
      })
 }
 
+
+
+const updateInventory = _ => {
+  getProducts('*')
+    .then(r => {
+      prompt([
+        {
+          type: 'list',
+          name: 'product_name',
+          message: 'Select the product you wish to change:',
+          choices: r.map(({ item_id, product_name }) => `${item_id}  ${product_name}`)
+        },
+       
+        {
+          type: 'input',
+          name: 'value',
+          message: 'How many more?'
+        }
+      ])
+        .then( r => {
+          console.log('lets update')
+        getAction()
+    })
+    
+})
+
+.catch(e => console.log(e))
+}
+
+
 // const updateSong = _ => {
 //   getSongs('title')
-//     .then(r => {
+//     .then(r => {)
 //       prompt([
 //         {
 //           type: 'list',
@@ -143,8 +173,8 @@ const getAction = _ => {
          
           break
         case 'Add to Inventory':
-         
-         console.log('add')
+        updateInventory() 
+        
           break
         case 'Add New Product':
         addProduct()
