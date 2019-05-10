@@ -69,7 +69,7 @@ const addProduct = _ => {
      .then(item => {
        db.query('INSERT INTO PRODUCTS SET ?', item, e => {
          if (e) throw e
-         console.log('*** Successfully added your product! ***')
+         console.log('\n*** Successfully added your product! ***\n')
          getAction()
        })
      })
@@ -94,7 +94,7 @@ async function updateQty(prod_id,qty) {
                          if (e) {
                              reject(e)
                          } else {
-                          resolve('*** Inventory Updated Succesfully  ***')
+                          resolve('\n*** Inventory Updated Succesfully  ***\n')
                           }
                         })        
                 }
