@@ -150,9 +150,9 @@ const getAction = _ => {
           getProducts('*')
             .then(r => {
               r.forEach(({item_id, product_name, price}) => console.log(`
-                ----------
+                ---------------------------------------
                 #${item_id} ${product_name} - $${price}
-                ----------`
+                ---------------------------------------`
               ))
               getAction()
             })
@@ -162,10 +162,9 @@ const getAction = _ => {
         getLowInventory('*')
           .then(r => {
             r.forEach(({item_id, product_name, stock_quantity}) => console.log(`
-              ----------
+              ---------------------------------------------------
               #${item_id} ${product_name} - QTY:${stock_quantity}
-              ----------`
-            ))
+              ---------------------------------------------------` ))
             getAction()
           })
           .catch(e => console.log(e))
