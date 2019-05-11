@@ -8,7 +8,6 @@ const db = createConnection({
     database: 'bamazon_db'
 })
 
-
 async function getProducts(columns) {
     //Get all Products from the Database
     let response = await new Promise((resolve, reject) => {
@@ -23,7 +22,6 @@ async function getProducts(columns) {
     return response
 }
 
-
 //Update inventory of product with prod_id
 //Returns Promise
 async function buyItem(prod_id,qty) {
@@ -34,25 +32,47 @@ async function buyItem(prod_id,qty) {
              if (e) {
                   reject(e)
                  console.log(e)
-             }
+                   }
                 else {
                     let currentQty =  r[0].stock_quantity
-
-
                     if (currentQty < qty)
                     resolve('\n*** Sorry we dont have enough  ***\n')
                     else 
-{
-                    let newQty = currentQty - parseInt(qty)
-                    db.query(`UPDATE products set stock_quantity = ${newQty} WHERE item_id = ${prod_id}`, (e, r) => {
-                           if (e) {
-                               reject(e)
-                           } else {
-                            resolve('\n*** Purchase Successful  ***\n')
+                    {
+
+
+                        prompt([
+                            {
+                              type: 'list',
+                              name: 'confirm',
+                              message: 'Are u sure?',
+                              choices: ['Yes','No']
+                            } ])
+                            
+                            .then( r =>  
+                            
+                            {
+
+                                console.log(r.confirm)
+                            if (r.confirm === "Yes")
+                            {  
+                            let newQty = currentQty - parseInt(qty)
+                            db.query(`UPDATE products set stock_quantity = ${newQty} WHERE item_id = ${prod_id}`, (e, r) => {
+                                   if (e) {
+                                       reject(e)
+                                   } else {
+                                    resolve('\n*** Purchase Successful  ***\n')
+                                    }
+                                  }) 
                             }
-                          })  
-                          
-                        }
+
+                            else 
+                            {
+                               getAction()
+                            }
+                            
+                        })
+                    }
                   }
               })
           })
@@ -63,7 +83,6 @@ async function buyItem(prod_id,qty) {
 //Update inventory of product selected from list 
   const buyProducts = _ => {
 
-    console.log("Inside Buy Prodcuts")
  getProducts('*')
       .then(r => {
         prompt([
@@ -84,7 +103,8 @@ async function buyItem(prod_id,qty) {
   
             //Call Function with promise
             buyItem(itemID, r.value)
-            .then(r => {console.log(r)
+            .then(r => {
+            console.log(r)
             getAction()
           })
             .catch(e => console.log(e))            
@@ -92,9 +112,6 @@ async function buyItem(prod_id,qty) {
           })     
   .catch(e => console.log(e))
    }
-
-
-
 
 
 const getAction = _ => {
