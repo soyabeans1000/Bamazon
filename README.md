@@ -28,4 +28,13 @@ This is an Amazon-like storefront with MySQL. The app will take in orders from c
 
   * If a manager selects `Add New Product`, it allows the manager to add a completely new product to the store.
 
+## Some Screenshots
+
+![customer-view](screenshots/customer_view.jpg)
+
+![manager-view](screenshots/manager1.jpg)
+
+![manager-view](screenshots/manager2.jpg)
+
+
 
