@@ -53,7 +53,7 @@ async function buyItem(prod_id,qty) {
                             
                             {
 
-                                console.log(r.confirm)
+                                
                             if (r.confirm === "Yes")
                             {  
                             let newQty = currentQty - parseInt(qty)
@@ -68,6 +68,7 @@ async function buyItem(prod_id,qty) {
 
                             else 
                             {
+                              resolve('\n*** Item purchase cancelled!  ***\n')
                                getAction()
                             }
                             
