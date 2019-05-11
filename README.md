@@ -27,9 +27,9 @@ This is an Amazon-like storefront with MySQL. The app will take in orders from c
   * If a manager selects `Add to Inventory`, the app displays a prompt that will let the manager "add more" of any item currently in the store.
 
   * If a manager selects `Add New Product`, it allows the manager to add a completely new product to the store.
-
-## Some Screenshots
-
+  
+  * Video Demonstration: https://drive.google.com/file/d/1lWH0FLh21CQ3nSe3T177Bvzy3Sc1ef0H/view
+  
 ![customer-view](screenshots/customer_view.jpg)
 
 ![manager-view](screenshots/manager1.jpg)
