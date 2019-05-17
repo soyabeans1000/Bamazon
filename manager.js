@@ -5,7 +5,7 @@ const db = createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: 'Reboot@2019',
+    password: '',
     database: 'bamazon_db'
 })
 
